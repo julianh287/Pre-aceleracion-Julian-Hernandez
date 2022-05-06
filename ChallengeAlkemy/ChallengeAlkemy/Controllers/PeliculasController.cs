@@ -23,199 +23,96 @@ namespace ChallengeAlkemy.Controllers
 
         //GET de peliculas. Deberá mostrar imagen, titulo y fecha. endpoint: /movies
         [HttpGet]
-        [Route("movies")]
-        public async Task<IActionResult> GetMovieList()
+        [Route("movies")]     
+        public async Task<IActionResult> Get()
         {
             try
             {
-                var query = _context.GetQueryable()
-                            .Select(m => new ListMovieDTO { img_url = m.Image_url, title = m.Title, date = m.Date_creation })
-                            .ToList();
-
-                return Ok(query);
+                var list = _context.GetAllPeliculas();
+                return Ok(list);
             }
-            catch (System.Exception e)
+            catch
             {
-                throw new Exception(e.Message);
+                return BadRequest("Error: No se pudo obtener el listado de películas");
             }
         }
 
         //GET Pelicula. Devuelve todos los campos de Pelicula y los personajes asociados. 
         [HttpGet]
-        [Route("movie/details")]
-        public async Task<IActionResult> GetMovieDetails()
+        [Route("movie/details/{id}")]
+        public IActionResult GetMovie(int id)
         {
-            try
-            {
-                var query = _context.GetMovieDetails();
-                return Ok(query);
-            }
-            catch (System.Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            if (_context.Pelicula.Where(x => x.Id == id) == null) return BadRequest("La pelicula no existe");
+
+            var peliculaAuxiliar = _context.Pelicula.Find(id);
+            return Ok(peliculaAuxiliar);
         }
+
         //POST Pelicula
         [HttpPost]
         [Route("movie/create")]
-        public async Task<ActionResult> Create([FromBody] CreateMovieDTO model)
+        public IActionResult Post(Peliculas pelicula)
         {
-            var exists = await _context.SingleOrDefaultAsync(m => m.Title == model.title);
-
-            if (exists != null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new
-                {
-                    Status = "Error",
-                    Message = "The character already exists!"
-                });
-            }
-
-            var pelicula = new Peliculas
-            {
-                Image_url = model.image_url,
-                Title = model.title,
-                Date_creation = model.date_creation,
-                Rating = model.rating,
-            };
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    if (string.IsNullOrEmpty(model.image_url))
-                    {
-                        return Ok("Image not found");
-                    }
-                    if (string.IsNullOrEmpty(model.title))
-                    {
-                        return Ok("Name required");
-                    }
-
-                    await _context.Insert(pelicula);
-                }
-                catch (System.Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-            }
-
-            return Ok(new
-            {
-                Status = "Success",
-                Message = "Movie creation successfully!"
-            });
-
+            _context.Pelicula.Add(pelicula);
+            _context.SaveChanges();
+            return Ok(_context.Pelicula.ToList());
         }
+
         //PUT Pelicula
         [HttpPut]
         [Route("movie/update")]
-        public async Task<ActionResult> Edit(UpdateMovieDTO model)
+        public IActionResult Put(Peliculas pelicula)
         {
-            var match = _context.GetQueryable().FirstOrDefault(c => c.MovieID == model.movieID);
+            if (_context.Pelicula.Where(x => x.Id == pelicula.Id) == null) return BadRequest("La pelicula no existe");
 
-            if (match == null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new
-                {
-                    Status = "Error",
-                    Message = "Id number not found!"
-                });
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    match.Image_url = model.image_url;
-                    match.Title = model.title;
-                    match.Date_creation = model.date_creation;
-                    match.Rating = model.rating;
-
-                    if (string.IsNullOrEmpty(model.image_url))
-                    {
-                        return Ok("Image not found");
-                    }
-                    if (string.IsNullOrEmpty(model.title))
-                    {
-                        return Ok("Name required");
-                    }
-
-                    await _context.Update(match);
-                }
-                catch (System.Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-            }
-
-            return Ok(new
-            {
-                Status = "Success",
-                Message = "Movie updated successfully!"
-            });
+            var peliculaAuxiliar = _context.Pelicula.Find(pelicula.Id);
+            peliculaAuxiliar.Titulo = pelicula.Titulo;
+            peliculaAuxiliar.Imagen = pelicula.Imagen;
+            peliculaAuxiliar.Fecha = pelicula.Fecha;
+            peliculaAuxiliar.Personaje = pelicula.Personaje;
+            peliculaAuxiliar.Calificacion = pelicula.Calificacion;
+            peliculaAuxiliar.Genero = pelicula.Genero;
+            _context.SaveChanges();
+            return Ok(_context.Pelicula.ToList());
         }
+
         //DELETE Pelicula
         [HttpDelete]
-        [Route("movie/delete")]
-        public async Task<ActionResult> Delete(int? id)
+        [Route("movie/delete/{id}")]
+        public IActionResult Delete(int id)
         {
-            try
-            {
-                if (id == null)
-                    return NotFound();
-
-                await _context.Delete(id.Value);
-
-                return Ok(new
-                {
-                    Status = "Success",
-                    Message = "Movie deleted successfully!"
-                });
-            }
-            catch (Exception)
-            {
-                return NotFound("Movie doesn't exists");
-            }
+            if (_context.Pelicula.Where(x => x.Id == id) == null) return BadRequest("La pelicula no existe");
+            var peliculaAuxiliar = _context.Pelicula.Find(id);
+            _context.Pelicula.Remove(peliculaAuxiliar);
+            _context.SaveChanges();
+            return Ok(_context.Pelicula.ToList());
         }
+
 
         //BUSQUEDA DE PELICULAS
         //GET /movies?name=nombre
         [HttpGet]
-        [Route("movie/byTitle")]
-        public async Task<ActionResult> GetMovieByTitle([FromQuery] SearchMovieDTO model)
+        [Route("movies")]
+        public IActionResult GetByName(string nombre)
         {
-            var exists2 = await _context.FirstOrDefaultAsync(m => m.Title.Contains(model.title));
+            if (_context.Pelicula.Where(x => x.Titulo == nombre) == null) return BadRequest("La pelicula no existe");
 
-            if (exists2 == null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new
-                {
-                    Status = "Error",
-                    Message = "The movie doesn't exists!"
-                });
-            }
-
-            try
-            {
-                var query = _context.GetMovieByTitle(model.title, model.genreId, model.orderBy);
-                return Ok(query);
-            }
-            catch (System.Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var peliculaAuxiliar = _context.Pelicula.Find(nombre);
+            return Ok(peliculaAuxiliar);
         }
+
         //GET /movies?genre=idGenero
         //GET /movies?order=ASC | DESC
-
     }
 }
 
 
 
 
-
+/*  public IActionResult Get()
+       {
+           return Ok(_context.Pelicula.ToList());
+       }*/
 
 
 

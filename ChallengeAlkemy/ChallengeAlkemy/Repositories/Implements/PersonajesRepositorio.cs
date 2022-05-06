@@ -8,21 +8,16 @@ using System.Threading.Tasks;
 
 namespace ChallengeAlkemy.Repositories.Implements
 {
-    public class PersonajesRepositorio : IGenericRepository<Personajes>, IPersonajesRepositorio
+    public class PersonajesRepositorio : IGenericRepository<Personajes>
     {
         private PeliculasContext _peliculasContext;
 
-        public PersonajesRepositorio(PeliculasContext peliculasContext) : base(peliculasContext)
+        public PersonajesRepositorio(PeliculasContext peliculasContext) : base()
         {
             _peliculasContext = peliculasContext;
         }
 
         public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Personajes> FirstOrDefaultAsync(Expression<Func<Personajes, bool>> predicate)
         {
             throw new NotImplementedException();
         }
@@ -37,27 +32,7 @@ namespace ChallengeAlkemy.Repositories.Implements
             throw new NotImplementedException();
         }
 
-        public IQueryable<Personajes> GetPersonajeByName(string nombre, int edad, decimal peso, int personajeId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<Personajes> GetPersonajeDetails()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<Personajes> GetQueryable()
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<Personajes> Insert(Personajes entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Personajes> SingleOrDefaultAsync(Expression<Func<Personajes, bool>> predicate)
         {
             throw new NotImplementedException();
         }

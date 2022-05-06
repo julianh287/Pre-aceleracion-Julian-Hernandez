@@ -33,8 +33,8 @@ namespace ChallengeAlkemy
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            /*var connection = "Server=GMEC-NT-001\\SQLEXPRESS;Database=PeliculasDB;Trusted_Connection=True;ConnectRetryCount=0";
-            services.AddDbContext<DbContext>(options => options.UseSqlServer(connection));*/
+            var connection = "Server=GMEC-NT-001\\SQLEXPRESS;Database=PeliculasDB;Trusted_Connection=True;ConnectRetryCount=0";
+            services.AddDbContext<DbContext>(options => options.UseSqlServer(connection));
             services.AddIdentity<Usuarios, IdentityRole>()
                 .AddEntityFrameworkStores<UsuariosContext>()
                 .AddDefaultTokenProviders();
@@ -63,8 +63,8 @@ namespace ChallengeAlkemy
                 options.UseInternalServiceProvider(services);
                 options.UseSqlServer(Configuration.GetConnectionString("UsersConectionString"));
             });
-            services.AddScoped<IPersonajesRepositorio, PersonajesRepositorio>();
-            services.AddScoped<IPeliculasRepositorio, PeliculasRepositorio>();
+            services.AddScoped<PersonajesRepositorio>();
+            services.AddScoped<PeliculasRepositorio>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,9 +6,27 @@ using System.Threading.Tasks;
 
 namespace ChallengeAlkemy.Services
 {
-    public interface IPersonajesService : IGenericService<Personajes>
+    public class PersonajesService : IGenericService<Personajes>
     {
-        IQueryable<Personajes> GetPersonajeDetails();
-        IQueryable<Personajes> GetPersonajeByName(string nombre, int edad, decimal peso, int personajeId);
+        public Task Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<List<Personajes>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+        public Task GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<Personajes> Insert(Personajes entity)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<Personajes> Update(Personajes entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
