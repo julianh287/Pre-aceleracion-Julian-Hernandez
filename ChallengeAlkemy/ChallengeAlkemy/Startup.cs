@@ -1,6 +1,7 @@
 using ChallengeAlkemy.Context;
 using ChallengeAlkemy.Entities;
 using ChallengeAlkemy.Repositories;
+using ChallengeAlkemy.Repositories.Implements;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,7 +63,7 @@ namespace ChallengeAlkemy
                 options.UseInternalServiceProvider(services);
                 options.UseSqlServer(Configuration.GetConnectionString("UsersConectionString"));
             });
-            services.AddScoped<IPeliculasRepositorio, PersonajesRepositorio>();
+            services.AddScoped<IPersonajesRepositorio, PersonajesRepositorio>();
             services.AddScoped<IPeliculasRepositorio, PeliculasRepositorio>();
         }
 
